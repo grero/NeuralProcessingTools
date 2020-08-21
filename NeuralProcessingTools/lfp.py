@@ -87,8 +87,8 @@ class LFPData(DPObject):
         lfpdata.filtet_coefs = {}
         lfpdata.filter_name = filter_name
         lfpdata.filter_order = filter_order
-        lfpdata.low_freq = lowfreq
-        lfpdata.high_freq = highfreq
+        lfpdata.low_freq = lowfreq[0]
+        lfpdata.high_freq = highfreq[0]
         lfpdata.sampling_rate = self.sampling_rate
         lfpdata.channel = self.channel
         z,p,k = signal.tf2zpk(b, a)
