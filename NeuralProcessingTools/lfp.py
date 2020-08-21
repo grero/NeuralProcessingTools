@@ -44,8 +44,8 @@ class LFPData(DPObject):
                                      _data["filter_coefs"].items())
             self.filter_name = bytes(_data["filter_name"][:]).decode('utf-16')
             self.filter_order = _data["filter_order"][:]
-            self.low_freq = _data["low_freq"][:]
-            self.high_freq = _data["high_freq"][:]
+            self.low_freq = _data["low_freq"][:][0]
+            self.high_freq = _data["high_freq"][:][0]
             self.sampling_rate = _data["sampling_rate"][:]
             self.channel = _data["channel"][:]
 
@@ -87,8 +87,8 @@ class LFPData(DPObject):
         lfpdata.filtet_coefs = {}
         lfpdata.filter_name = filter_name
         lfpdata.filter_order = filter_order
-        lfpdata.low_freq = lowfreq[0]
-        lfpdata.high_freq = highfreq[0]
+        lfpdata.low_freq = lowfreq
+        lfpdata.high_freq = highfreq
         lfpdata.sampling_rate = self.sampling_rate
         lfpdata.channel = self.channel
         z,p,k = signal.tf2zpk(b, a)
