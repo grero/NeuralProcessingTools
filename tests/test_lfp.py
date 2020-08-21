@@ -3,6 +3,8 @@ import DataProcessingTools as DPT
 import wget
 import tempfile
 import os
+import numpy as np
+
 
 def test_loading():
     tdir = tempfile.gettempdir()
