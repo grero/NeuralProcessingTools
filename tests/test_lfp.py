@@ -22,6 +22,7 @@ def test_loading():
         gamma_lfp.save()
         lfpdata2 = NPT.LFPData(loadFrom=gamma_lfp.get_filename())
         assert np.allclose(gamma_lfp.data, lfpdata2.data)
+        assert gamma_lfp.filter_name == lfpdata2.filter_name
         os.unlink(gamma_lfp.get_filename())
         os.unlink("lowpass.mat")
         
