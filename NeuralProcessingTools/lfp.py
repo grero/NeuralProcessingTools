@@ -3,6 +3,8 @@ from DataProcessingTools.objects import DPObject
 import h5py
 import scipy.signal as signal
 import matplotlib.pylab as plt
+import numpy as np
+
 
 class LFPData(DPObject):
     filename = "lowpass.mat"
@@ -44,8 +46,8 @@ class LFPData(DPObject):
                                      _data["filter_coefs"].items())
             self.filter_name = bytes(_data["filter_name"][:]).decode('utf-16')
             self.filter_order = _data["filter_order"][:]
-            self.low_freq = _data["low_freq"][:]
-            self.high_freq = _data["high_freq"][:]
+            self.low_freq = _data["low_freq"][:][0]
+            self.high_freq = _data["high_freq"][:][0]
             self.sampling_rate = _data["sampling_rate"][:]
             self.channel = _data["channel"][:]
 
@@ -59,11 +61,14 @@ class LFPData(DPObject):
             _data["data"] = self.data
             _data["sampling_rate"] = self.sampling_rate
             _data["channel"] = self.channel
-            _data["filter_order"] = self.filter_order
-            _data["filter_name"] = self.filter_name
+            _data["filter_order"] = np.atleast_1d(self.filter_order)
+            _data["filter_name"] = np.array(bytearray(self.filter_name, 'utf-8'),
+                                            dtype=np.uint16)
+            _data["low_freq"] = np.atleast_1d(self.low_freq)
+            _data["high_freq"] = np.atleast_1d(self.high_freq)
             _coefs = _data.create_group("filter_coefs")
             for (k, v) in self.filter_coefs.items():
-                _coefs[k] = v
+                _coefs[k] = np.atleast_1d(v)
 
     def filter(self, lowfreq, highfreq,
                filter_name="Butterworth", filter_order=4):
