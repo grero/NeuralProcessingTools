@@ -62,7 +62,7 @@ class LFPData(DPObject):
             _data["sampling_rate"] = self.sampling_rate
             _data["channel"] = self.channel
             _data["filter_order"] = self.filter_order
-            _data["filter_name"] = self.filter_name
+            _data["filter_name"] = bytearray(self.filter_name, 'utf-8')
             _coefs = _data.create_group("filter_coefs")
             for (k, v) in self.filter_coefs.items():
                 _coefs[k] = np.atleast_1d(v)
