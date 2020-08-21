@@ -3,7 +3,7 @@ from matplotlib.pyplot import gcf, gca
 import DataProcessingTools as DPT
 from DataProcessingTools.objects import DPObject
 from DataProcessingTools import levels
-from DataProcessingTools.raster import Raster
+from .raster import Raster
 import os
 import glob
 import h5py
