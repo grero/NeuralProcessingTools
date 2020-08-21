@@ -2,8 +2,8 @@ from matplotlib.pyplot import gca
 import numpy as np
 import DataProcessingTools as DPT
 from DataProcessingTools.objects import DPObject
-from DataProcessingTools.spiketrain import Spiketrain
-from DataProcessingTools.trialstructures import *
+from .spiketrain import Spiketrain
+from .trialstructures import *
 import os
 
 
