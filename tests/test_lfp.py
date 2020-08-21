@@ -16,5 +16,12 @@ def test_loading():
         assert lfpdata.high_freq == 300.0
         assert lfpdata.filter_name == "Butterworth"
         assert lfpdata.filter_order == 4
+
+        # filter in the gamma band
+        gamma_lfp = lfpdata.filter(20.0, 40.0)
+        gamma_lfp.save()
+        lfpdata2 = NPT.LFPData(loadFrom=gamma_lfp.get_filename())
+        assert np.allclose(gamma_lfp.data, lfpdata2.data)
+        os.unlink(gamma_lfp.get_filename())
         os.unlink("lowpass.mat")
         
