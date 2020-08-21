@@ -64,6 +64,8 @@ class LFPData(DPObject):
             _data["filter_order"] = np.atleast_1d(self.filter_order)
             _data["filter_name"] = np.array(bytearray(self.filter_name, 'utf-8'),
                                             dtype=np.uint16)
+            _data["low_freq"] = np.atleast_1d(self.low_freq)
+            _data["high_freq"] = np.atleast_1d(self.high_freq)
             _coefs = _data.create_group("filter_coefs")
             for (k, v) in self.filter_coefs.items():
                 _coefs[k] = np.atleast_1d(v)
