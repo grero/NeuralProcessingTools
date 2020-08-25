@@ -51,3 +51,5 @@ for cell in cells[1:]:
 
 app = PanGUI.create_window([raster, psth], cols=1, indexer="cell")
 ```
+
+See this [notebook](https://github.com/grero/NeuralProcessingTools/tree/master/notebooks/LFP_analysis.py) for more usage examples.
