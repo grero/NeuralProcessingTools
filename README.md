@@ -1,10 +1,17 @@
-# DataProcessingTools
+# NeuralProcessingTools
 
 [![Build Status](https://travis-ci.com/grero/NeuralProcessingTools.svg?branch=master)](https://travis-ci.com/grero/NeuralProcessingTools)
 [![Coverage Status](https://coveralls.io/repos/github/grero/NeuralProcessingTools/badge.svg?branch=master)](https://coveralls.io/github/grero/NeuralProcessingTools?branch=master)
 
 ## Introduction
 This package contains tools for analyzing data recorded during electrophysiological experiments using multi-channel extra cellular electrodes.
+
+## Installation
+
+```bash
+pip install git+https://github.com/grero/DataProcessingTools
+pip install git+https://github.com/grero/NeuroProcessingTools
+```
 
 ## Usage
 
