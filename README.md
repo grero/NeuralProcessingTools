@@ -10,7 +10,7 @@ This package contains tools for analyzing data recorded during electrophysiologi
 
 ```bash
 pip install git+https://github.com/grero/DataProcessingTools
-pip install git+https://github.com/grero/NeuroProcessingTools
+pip install git+https://github.com/grero/NeuralProcessingTools
 ```
 
 ## Usage
