@@ -17,6 +17,7 @@
 # %matplotlib widget
 
 import DataProcessingTools as DPT
+import NeuralProcessingTools as NPT
 import numpy as np
 import matplotlib.pylab as plt
 import scipy.signal as signal
@@ -25,12 +26,9 @@ import scipy.signal as signal
 
 datadir = "/Volumes/FastData/data/workingMemory/Whiskey/20200106/session02/array01/channel001"
 with DPT.misc.CWD(datadir):
-    lfpdata = DPT.LFPData(loadFrom="lowpass.mat")
-
-# +
+    lfpdata = NPT.LFPData(loadFrom="lowpass.mat")
 
 lfpdata.plot()
-# -
 
 # This data contains frequencies from 0.1 to 300 Hz, as you can see from the parameters used to create the data
 
@@ -46,7 +44,7 @@ gamma_data.plot()
 # First, let us load the trial structure for the same recording session
 
 with DPT.misc.CWD(datadir):
-    trials = DPT.trialstructures.WorkingMemoryTrials()
+    trials = NPT.trialstructures.WorkingMemoryTrials()
 
 # We can now align the LFPs to the onset of the first stimulus of each correct trial.
 
