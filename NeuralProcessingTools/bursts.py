@@ -1,6 +1,7 @@
 import numpy as np
 from DataProcessingTools.objects import DPObject
 from .spiketrain import Spiketrain
+import scipy.special as special
 import os
 
 
@@ -19,6 +20,19 @@ class AbsoluteThreshold():
     def value(self, x):
         return self._value
 
+
+class LogNormalThreshold():
+    def __init__(self, value):
+        self._value = value
+
+    def value(self, x):
+        y = np.log(x)
+        mu = y.mean()
+        sigma = y.std()
+        p = self._value
+        # quantile function for a log-normal distribution
+        qtl = np.exp(mu + np.sqrt(2)*sigma*special.erfinv(2*p-1))
+        return qtl
 
 def find_spikebursts(spiketrain, threshold=PercentileThreshold(10)):
     isi = np.diff(spiketrain)
