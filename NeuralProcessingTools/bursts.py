@@ -52,6 +52,10 @@ class SpikeBursts(DPObject):
         spiketimes = spiketrain.timestamps.flatten()
         burst_idx, burst_length = find_spikebursts(spiketimes,
                                                    self.args["threshold"])
-        self.burst_idx = burst_idx
-        self.burst_length = burst_length
+        self.burst_start = spiketimes[burst_idx]
+        self.burst_length = (spiketimes[np.array(burst_idx) + burst_length-1] -
+                             spiketimes[burst_idx])
+        # burst rate in bursts per second
+        self.burst_rate = len(burst_idx)/(spiketimes[-1] - spiketimes[0])
+        self.burst_rate *= 1000
         self.dirs = [os.getcwd()]

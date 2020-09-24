@@ -1,6 +1,7 @@
 import DataProcessingTools as DPT
 import NeuralProcessingTools as NPT
 import scipy.io as sio
+import numpy as np
 import os
 import tempfile
 
@@ -23,8 +24,9 @@ def test_object():
                          "spikeForm": [0.0]})
             spikebursts = NPT.SpikeBursts(saveLevel=1)
             assert os.path.isfile(spikebursts.get_filename())
-            assert spikebursts.burst_idx == [3, 7]
-            assert spikebursts.burst_length == [3, 2]
+            assert np.allclose(spikebursts.burst_start, [0.45, 0.8])
+            assert np.allclose(spikebursts.burst_length, [0.02, 0.01])
+            assert spikebursts.burst_rate == 1000*2/0.81
             os.remove(spikebursts.get_filename())
             os.remove("unit.mat")
 
