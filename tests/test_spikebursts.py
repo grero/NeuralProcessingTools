@@ -38,6 +38,7 @@ def test_object():
             assert np.allclose(spikebursts.burst_start, [0.45, 0.8])
             assert np.allclose(spikebursts.burst_length, [0.02, 0.01])
             assert spikebursts.burst_rate == 1000*2/0.81
+            assert spikebursts.spikes_in_burst == 5/12
             spikebursts2 = NPT.SpikeBursts(saveLevel=0,
                                            threshold=NPT.bursts.AbsoluteThreshold(0.01))
             spikebursts.append(spikebursts2)
