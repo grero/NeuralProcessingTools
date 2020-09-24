@@ -63,13 +63,29 @@ class SpikeBursts(DPObject):
 
     def create(self, *args, **kwargs):
         spiketrain = Spiketrain(*args, **kwargs)
-        spiketimes = spiketrain.timestamps.flatten()
-        burst_idx, burst_length = find_spikebursts(spiketimes,
-                                                   self.args["threshold"])
-        self.burst_start = spiketimes[burst_idx]
-        self.burst_length = (spiketimes[np.array(burst_idx) + burst_length-1] -
-                             spiketimes[burst_idx])
-        # burst rate in bursts per second
-        self.burst_rate = len(burst_idx)/(spiketimes[-1] - spiketimes[0])
-        self.burst_rate *= 1000
-        self.dirs = [os.getcwd()]
+        if spiketrain.dirs == []:
+            self.burst_start = np.array((),dtype=np.float64)
+            self.burst_length = np.array((),dtype=np.float64)
+            self.burst_rate = 0.0
+            self.dirs = []
+            self.setdidx = []
+        else:
+            spiketimes = spiketrain.timestamps.flatten()
+            burst_idx, burst_length = find_spikebursts(spiketimes,
+                                                       self.args["threshold"])
+            self.burst_start = spiketimes[burst_idx]
+            bidx = np.array(burst_idx, dtype=np.uint64)
+            blen = np.array(burst_length, dtype=np.uint64)
+            self.burst_length = (spiketimes[bidx + blen-1] -
+                                 spiketimes[bidx])
+            # burst rate in bursts per second
+            self.burst_rate = len(burst_idx)/(spiketimes[-1] - spiketimes[0])
+            self.burst_rate *= 1000
+            self.dirs = [os.getcwd()]
+            self.setidx = [0 for i in range(len(burst_length))]
+
+    def append(self, bursts):
+        DPObject.append(self, bursts)
+        self.burst_rate = np.append(np.atleast_1d(self.burst_rate),[bursts.burst_rate])
+        self.burst_start = np.append(self.burst_start, bursts.burst_start)
+        self.burst_length = np.append(self.burst_length, bursts.burst_length)
