@@ -1,6 +1,7 @@
 import numpy as np
 from DataProcessingTools.objects import DPObject
 from .spiketrain import Spiketrain
+import os
 
 
 class PercentileThreshold():
@@ -51,3 +52,4 @@ class SpikeBursts(DPObject):
         burst_idx, burst_length = find_spikebursts(spiketrain, self.args["threshold"]) 
         self.burst_idx = burst_idx
         self.burst_length = burst_length
+        self.dirs = [os.getcwd()]
