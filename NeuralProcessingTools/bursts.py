@@ -49,7 +49,9 @@ class SpikeBursts(DPObject):
 
     def create(self, *args, **kwargs):
         spiketrain = Spiketrain(*args, **kwargs)
-        burst_idx, burst_length = find_spikebursts(spiketrain, self.args["threshold"]) 
+        spiketimes = spiketrain.timestamps.flatten()
+        burst_idx, burst_length = find_spikebursts(spiketimes,
+                                                   self.args["threshold"])
         self.burst_idx = burst_idx
         self.burst_length = burst_length
         self.dirs = [os.getcwd()]
