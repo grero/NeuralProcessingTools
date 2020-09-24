@@ -43,7 +43,7 @@ def find_spikebursts(spiketrain, threshold=PercentileThreshold(10)):
 
 
 class SpikeBursts(DPObject):
-    filename = "spikebursts.mat"
+    filename = "spikebursts.hkl"
     level = "cell"
     argsList = [("threshold", PercentileThreshold(10))]
 
