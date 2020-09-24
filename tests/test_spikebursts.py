@@ -41,6 +41,7 @@ def test_object():
             spikebursts2 = NPT.SpikeBursts(saveLevel=0,
                                            threshold=NPT.bursts.AbsoluteThreshold(0.01))
             spikebursts.append(spikebursts2)
+            assert np.allclose(spikebursts.burst_start[-len(spikebursts2.burst_start)], spikebursts2.burst_start)
             os.remove(spikebursts.get_filename())
             os.remove("unit.mat")
 
