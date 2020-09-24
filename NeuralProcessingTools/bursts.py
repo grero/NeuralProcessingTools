@@ -7,19 +7,19 @@ import os
 class PercentileThreshold():
     def __init__(self, value):
         self._value = value
-        
+
     def value(self, x):
         return np.percentile(x, self._value)
-    
-    
+
+
 class AbsoluteThreshold():
     def __init__(self, value):
         self._value = value
-        
+
     def value(self, x):
         return self._value
-        
-        
+
+
 def find_spikebursts(spiketrain, threshold=PercentileThreshold(10)):
     isi = np.diff(spiketrain)
     t = threshold.value(isi)
@@ -38,7 +38,7 @@ def find_spikebursts(spiketrain, threshold=PercentileThreshold(10)):
             if in_burst:
                 j += 1
                 in_burst = False
-                
+
     return burst_idx, burst_length
 
 
