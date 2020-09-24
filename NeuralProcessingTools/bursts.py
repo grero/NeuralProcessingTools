@@ -67,6 +67,7 @@ class SpikeBursts(DPObject):
             self.burst_start = np.array((),dtype=np.float64)
             self.burst_length = np.array((),dtype=np.float64)
             self.burst_rate = 0.0
+            self.spikes_in_burst = 0.0
             self.dirs = []
             self.setdidx = []
         else:
@@ -81,11 +82,14 @@ class SpikeBursts(DPObject):
             # burst rate in bursts per second
             self.burst_rate = len(burst_idx)/(spiketimes[-1] - spiketimes[0])
             self.burst_rate *= 1000
+            self.spikes_in_burst = blen.sum()/len(spiketimes)
             self.dirs = [os.getcwd()]
             self.setidx = [0 for i in range(len(burst_length))]
 
     def append(self, bursts):
         DPObject.append(self, bursts)
+        self.spikes_in_burst = np.append(np.atleast_1d(self.spikes_in_burst), 
+                                         bursts.spikes_in_burst)
         self.burst_rate = np.append(np.atleast_1d(self.burst_rate),[bursts.burst_rate])
         self.burst_start = np.append(self.burst_start, bursts.burst_start)
         self.burst_length = np.append(self.burst_length, bursts.burst_length)
