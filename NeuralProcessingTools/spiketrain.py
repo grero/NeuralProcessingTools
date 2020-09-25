@@ -18,6 +18,11 @@ class Spiketrain(DPObject):
         # always load since we do not create spike trains here.
         if os.path.isfile(self.filename):
             self.load()
+            self.dirs = [os.getcwd()]
+        else:
+            self.dirs = []
+            self.timestamps = np.array((), dtype=np.float64)
+            self.spikeshape = np.array((), dtype=np.float64)
 
     def load(self, fname=None):
         q = sio.loadmat(self.filename)
