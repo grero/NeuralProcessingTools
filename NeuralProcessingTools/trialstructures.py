@@ -66,10 +66,11 @@ class OldWorkingMemoryTrials(TrialStructure):
         TrialStructure.__init__(self, *args, **kwargs)
 
     def load(self):
-        fname = self.filename
+        leveldir = resolve_level(self.level)
+        fname = os.path.join(leveldir, self.filename)
         if h5py.is_hdf5(fname):
             ff = h5py.File(fname)
-            sv = ff.get("sv")
+            sv = ff.get("sv")[:].flatten().astype(np.int16)
             ts = ff.get("ts")[:].flatten()
         else:
             d = mio.loadmat(fname)
@@ -130,7 +131,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         else:
             event = self.reverse_map.get(word, None)
 
-        return event
+        return event, 0
 
 class WorkingMemoryTrials(TrialStructure):
     filename = "event_markers.csv"
