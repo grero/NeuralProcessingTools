@@ -116,6 +116,17 @@ class OldWorkingMemoryTrials(TrialStructure):
 
         words = self.to_words(sv)
         self.create_events(words, ts)
+        # kind hackish; convert (row, col) to idx in each stimulus event
+        p = re.compile("stimulus_on_([0-9])_\(([0-9]),([ 0-9]*)\)")
+        for (ii, event) in enumerate(self.events):
+            m = p.match(event)
+            if m is not None:
+                s, r, c = m.groups()[:3]
+                row = int(r)
+                col = int(c)
+                idx = (col-1)*self.nrows + row
+                self.events[ii] = "stimulus_on_{0}_{1}".format(s, idx)
+
         self.events = np.array(self.events)
         self.timestamps = np.array(self.timestamps)
         self.trialidx = np.array(self.trialidx)
