@@ -5,6 +5,8 @@ from DataProcessingTools.misc import *
 import numpy as np
 import os
 import csv
+import h5py
+import scipy.io as mio
 import re
 
 
@@ -13,6 +15,8 @@ class TrialStructure(DPObject):
         self.events = []
         self.timestamps = []
         DPObject.__init__(self, **kwargs)
+        self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
+        self.load()
 
     def get_timestamps(self, event_label):
         """
@@ -22,6 +26,111 @@ class TrialStructure(DPObject):
         idx = np.where(self.events == event_label)[0]
         return self.timestamps[idx]
 
+    def create_events(self, words, timestamps):
+        tidx = -1
+        stidx = -1
+        self.trialidx = []
+        self.stimidx = []
+        self.events = []
+        self.timestamps = []
+        for (word, ts) in zip(words, timestamps):
+            event, ss = self.parse_word(word)
+            stidx += ss
+            if event is not None:
+                self.events.append(event)
+                self.timestamps.append(ts)
+                if event == "trial_start":
+                    tidx += 1
+                    stidx = -1
+                self.trialidx.append(tidx)
+                self.stimidx.append(stidx)
+
+
+class OldWorkingMemoryTrials(TrialStructure):
+    filename = "event_data.mat"
+    level = "session"
+    trialevents = {"session_start": "11000000",
+                   "trial_start": "00000000",
+                   "fix_start": "00000001",
+                   "stimBlankStart": "00000011",
+                   "delay_start": "00000100",
+                   "response_on": "00000101",
+                   "trial_end": "00100000",
+                   "reward_on": "00000110",
+                   "failure": "00000111"
+                   }
+
+    def __init__(self, *args, **kwargs):
+        self.ncols = 0
+        self.nrows = 0
+        TrialStructure.__init__(self, *args, **kwargs)
+
+    def load(self):
+        fname = self.filename
+        if h5py.is_hdf5(fname):
+            ff = h5py.File(fname)
+            sv = ff.get("sv")
+            ts = ff.get("ts")[:].flatten()
+        else:
+            d = mio.loadmat(fname)
+            sv = d["sv"][:].astype(np.int16)
+            ts = d["sv"][:]
+
+        words = self.to_words(sv)
+        self.events = self.create_events(words, ts)
+        self.events = np.array(self.events)
+        self.timestamps = np.array(self.timestamps)
+        self.trialidx = np.array(self.trialidx)
+        self.stimidx = np.array(self.stimidx)
+
+    def to_words(self, strobes):
+        words = []
+        if (strobes[0] == 4415) or (strobes[0] == 4606) or (strobes[0] == 4159): 
+            for sv in strobes:
+                w = np.binary_repr(-sv, 16)[-8:]
+                words.append(w)
+        elif strobes[0] == -4416:
+            for sv in strobes:
+                w = np.binary_repr(2**15-abs(sv), 16)[-8:]
+                words.append(w)
+        elif strobes[0] == -64:
+            for sv in strobes:
+                if sv < 0:
+                    w = np.binary_repr(2**16 - abs(sv), 16)[-8:]
+                else:
+                    w = np.binary_repr(sv, 16)[-8:]
+                words.append(w)
+        elif (strobes.min() == 63) or (strobes.min() == 77) or (strobes.min() == 2069) or (strobes.min() == 2071) or (strobes.min() == 2271):
+            for sv in strobes:
+                w = np.binary_repr(-w, 16)[-8:]
+                words.append(w)
+        else:
+            for sv in strobes:
+                w = np.binary_repr(w, 16)[-8:]
+                words.append(w)
+        
+        return words
+    
+    def parse_word(self, word):
+        if (word[:1] == "10") or (word[:1] == "01"):
+            if word[0] == "0" and w[1] == "1":
+                stimid = 1
+            else:
+                stimid = 2
+
+            switch = "on"
+            row = int(w[7:4:-1], base=2)
+            col = int(w[4:1:-1], base=2)
+            if row > self.nrows:
+                self.nrows = row
+            if col > self.ncols:
+                self.ncols = cols
+            
+            event = "stimulus_{0}_{1}_{2}".format(switch, stimid, locidx)
+        else:
+            event = self.reverse_map.get(word, None)
+
+        return event
 
 class WorkingMemoryTrials(TrialStructure):
     filename = "event_markers.csv"
@@ -43,50 +152,40 @@ class WorkingMemoryTrials(TrialStructure):
                    "left_fixation": "00011101"}
 
     def __init__(self, **kwargs):
-        self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
         TrialStructure.__init__(self, **kwargs)
         # always load
-        self.load()
+
+    def parse_word(self, word):
+        stidx = 0
+        if word[:2] == "11":
+            idx = int(word[2:], 2)
+            event = "".join(("session", str(idx).zfill(2))) 
+        elif (word[:2] == "10") or (word[:2] == "01"):
+            if word[:2] == "10":
+                stimid = 1
+            else:
+                stimid = 2
+            if word[2] == "1":
+                switch = "on"
+                stidx += 1
+            else:
+                switch = "off"
+            locidx = int(word[3:], 2)
+            event = "stimulus_{0}_{1}_{2}".format(switch, stimid, locidx)
+        else:
+            event = self.reverse_map.get(word, None)
+        
+        return event, stidx
 
     def load(self, fname=None):
-        sessiondir = get_level_name("session")
         leveldir = resolve_level(self.level)
-        tidx = -1
-        stidx = -1
-        self.trialidx = []
-        self.stimidx = []
-        self.events = []
-        self.timestamps = []
-        with open(os.path.join(leveldir, self.filename), "r") as csvfile:
-            data = csv.DictReader(csvfile)
-            for row in data:
-                word = row["words"]
-                if word[:2] == "11":
-                    idx = int(word[2:], 2)
-                    event = "".join(("session", str(idx).zfill(2))) 
-                elif (word[:2] == "10") or (word[:2] == "01"):
-                    if word[:2] == "10":
-                        stimid = 1
-                    else:
-                        stimid = 2
-                    if word[2] == "1":
-                        switch = "on"
-                        stidx += 1
-                    else:
-                        switch = "off"
-                    locidx = int(word[3:], 2)
-                    event = "stimulus_{0}_{1}_{2}".format(switch, stimid, locidx)
-                else:
-                    event = self.reverse_map.get(word, None)
+        csvfile = open(os.path.join(leveldir, self.filename), "r")
+        data = [(row["words"], row["timestamps"]) for row in csv.DictReader(csvfile)]
+        words = [d[0] for d in data]
+        ts = [np.float(d[1]) for d in data]
+        self.create_events(words, ts)
 
-                if event is not None:
-                    self.events.append(event)
-                    self.timestamps.append(np.float(row["timestamps"]))
-                    if event == "trial_start":
-                        tidx += 1
-                        stidx = -1
-                    self.trialidx.append(tidx)
-                    self.stimidx.append(stidx)
+        sessiondir = get_level_name("session")
 
         if sessiondir: 
             # filter events to only those in the current session
@@ -99,6 +198,7 @@ class WorkingMemoryTrials(TrialStructure):
             except:
                 sidx1 = len(self.events)
             self.events = np.array(self.events[sidx0:sidx1])
+            print(self.timestamps)
             self.timestamps = np.array(self.timestamps[sidx0:sidx1]) - self.timestamps[sidx0]
             self.trialidx = np.array(self.trialidx[sidx0:sidx1]) - self.trialidx[sidx0]
             self.stimidx = np.array(self.stimidx[sidx0:sidx1])
