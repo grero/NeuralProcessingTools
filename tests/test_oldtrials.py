@@ -15,10 +15,10 @@ def test_oldtrials():
             os.makedirs(pth)
         
         with DPT.misc.CWD(pth):
-            __dir__ = os.path.dirname(__file__)
             do_unlink = False
             if not os.path.isfile("event_data.mat"):
                 wget.download("http://cortex.nus.edu.sg/testdata/J20140807_event_data.mat", "event_data.mat")
+                do_unlink = True
             trials = OldWorkingMemoryTrials()
             assert (trials.events == "trial_start").sum() == 934
             assert (trials.events == "reward_on").sum() == 369
