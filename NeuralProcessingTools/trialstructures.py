@@ -20,11 +20,48 @@ class TrialStructure(DPObject):
 
     def get_timestamps(self, event_label):
         """
-        Return the timestamps corresponding to the
-        specified event.
+        Return the timestamps of all events matching `event_label`. 
+        Wildcard can be used as well, so that, for example, to find all 
+        stimulus 1 onsets, regardless of position, use
+
+        trials.get_timestamps("stimulus_on_1_*")
+
         """
-        idx = np.where(self.events == event_label)[0]
-        return self.timestamps[idx]
+        events = self.events
+        trialidx = self.trialidx
+        timestamps = self.timestamps
+        stimidx = self.stimidx
+
+        idx = np.zeros((len(events), ), dtype=np.bool)
+        p = re.compile(event_label)
+        for (i, ee) in enumerate(events):
+            m = p.match(ee)
+            if m is not None:
+                idx[i] = True
+
+        return timestamps[idx], trialidx[idx], stimidx[idx]
+
+    def get_stim(self, stimidx=0, trialidx=None):
+        """
+        Return the timestamp, identity and location of the stimulus
+        at `stimidx` of every trial.
+        """
+        fidx = self.stimidx == stimidx
+        if trialidx is not None:
+            qidx = np.isin(self.trialidx, trialidx)
+            fidx = fidx & qidx
+        p = re.compile("stimulus_on_([0-9]+)_([0-9]+)")
+        location = []
+        identity = []
+        timestamps = []
+        for (ss, tt) in zip(self.events[fidx], self.timestamps[fidx]):
+            m = p.match(ss)
+            if m is not None:
+                g = m.groups()
+                identity.append(int(g[0]))
+                location.append(int(g[1]))
+                timestamps.append(tt)
+        return timestamps, identity, location
 
     def create_events(self, words, timestamps):
         tidx = -1
@@ -208,50 +245,6 @@ class WorkingMemoryTrials(TrialStructure):
             self.trialidx = np.array(self.trialidx)
             self.stimidx = np.array(self.stimidx)
 
-    def get_timestamps(self, event_label):
-        """
-        Return the timestamps of all events matching `event_label`. 
-        Wildcard can be used as well, so that, for example, to find all 
-        stimulus 1 onsets, regardless of position, use
-
-        trials.get_timestamps("stimulus_on_1_*")
-
-        """
-        events = self.events
-        trialidx = self.trialidx
-        timestamps = self.timestamps
-        stimidx = self.stimidx
-
-        idx = np.zeros((len(events), ), dtype=np.bool)
-        p = re.compile(event_label)
-        for (i ,ee) in enumerate(events):
-            m = p.match(ee)
-            if m is not None:
-                idx[i] = True
-
-        return timestamps[idx], trialidx[idx], stimidx[idx]
-
-    def get_stim(self, stimidx=0, trialidx=None):
-        """
-        Return the timestamp, identity and location of the stimulus
-        at `stimidx` of every trial.
-        """
-        fidx = self.stimidx==stimidx
-        if trialidx is not None:
-            qidx = np.isin(self.trialidx, trialidx)
-            fidx = fidx & qidx
-        p = re.compile("stimulus_on_([0-9]+)_([0-9]+)")
-        location = []
-        identity = []
-        timestamps = []
-        for (ss,tt) in zip(self.events[fidx], self.timestamps[fidx]):
-            m = p.match(ss)
-            if m is not None:
-                g = m.groups()
-                identity.append(int(g[0]))
-                location.append(int(g[1]))
-                timestamps.append(tt)
-        return timestamps, identity, location
 
 def get_trials():
     """
