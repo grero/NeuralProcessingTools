@@ -1,6 +1,7 @@
 import DataProcessingTools as DPT
 import NeuralProcessingTools as NPT
 from NeuralProcessingTools.trialstructures import OldWorkingMemoryTrials
+import numpy as np
 import tempfile
 import wget
 import os
@@ -21,5 +22,9 @@ def test_oldtrials():
             trials = OldWorkingMemoryTrials()
             assert (trials.events == "trial_start").sum() == 934
             assert (trials.events == "reward_on").sum() == 369
+            tidx = np.where(trials.events == "stimulus_on_1_(2, 2)")[0]
+            assert tidx[0] == 2
+            assert trials.ncols == 4
+            assert trials.nrows == 4
             if do_unlink:
                 os.unlink("event_data.mat")
