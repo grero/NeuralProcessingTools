@@ -22,8 +22,11 @@ def test_oldtrials():
             trials = OldWorkingMemoryTrials()
             assert (trials.events == "trial_start").sum() == 934
             assert (trials.events == "reward_on").sum() == 369
-            tidx = np.where(trials.events == "stimulus_on_1_(2, 2)")[0]
+            print(trials.events)
+            tidx = np.where(trials.events == "stimulus_on_1_6")[0]
             assert tidx[0] == 2
+            didx = np.where(trials.events == "stimulus_on_2_14")[0]
+            assert didx[0] == 323
             assert trials.ncols == 4
             assert trials.nrows == 4
             if do_unlink:
