@@ -113,20 +113,20 @@ class OldWorkingMemoryTrials(TrialStructure):
         return words
     
     def parse_word(self, word):
-        if (word[:1] == "10") or (word[:1] == "01"):
-            if word[0] == "0" and w[1] == "1":
+        if (word[:2] == "10") or (word[:2] == "01"):
+            if word[0] == "0" and word[1] == "1":
                 stimid = 1
             else:
                 stimid = 2
 
             switch = "on"
-            row = int(w[7:4:-1], base=2)
-            col = int(w[4:1:-1], base=2)
+            row = int(word[7:4:-1], base=2)
+            col = int(word[4:1:-1], base=2)
+            locidx = (row,col)
             if row > self.nrows:
                 self.nrows = row
             if col > self.ncols:
-                self.ncols = cols
-            
+                self.ncols = col
             event = "stimulus_{0}_{1}_{2}".format(switch, stimid, locidx)
         else:
             event = self.reverse_map.get(word, None)
