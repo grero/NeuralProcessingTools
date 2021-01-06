@@ -199,7 +199,6 @@ class WorkingMemoryTrials(TrialStructure):
             except:
                 sidx1 = len(self.events)
             self.events = np.array(self.events[sidx0:sidx1])
-            print(self.timestamps)
             self.timestamps = np.array(self.timestamps[sidx0:sidx1]) - self.timestamps[sidx0]
             self.trialidx = np.array(self.trialidx[sidx0:sidx1]) - self.trialidx[sidx0]
             self.stimidx = np.array(self.stimidx[sidx0:sidx1])
