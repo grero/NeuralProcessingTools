@@ -78,7 +78,7 @@ class OldWorkingMemoryTrials(TrialStructure):
             ts = d["sv"][:]
 
         words = self.to_words(sv)
-        self.events = self.create_events(words, ts)
+        self.create_events(words, ts)
         self.events = np.array(self.events)
         self.timestamps = np.array(self.timestamps)
         self.trialidx = np.array(self.trialidx)
