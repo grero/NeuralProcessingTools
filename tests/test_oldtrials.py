@@ -2,6 +2,7 @@ import DataProcessingTools as DPT
 import NeuralProcessingTools as NPT
 from NeuralProcessingTools.trialstructures import OldWorkingMemoryTrials
 import tempfile
+import wget
 import os
 
 
@@ -16,10 +17,9 @@ def test_oldtrials():
             __dir__ = os.path.dirname(__file__)
             do_unlink = False
             if not os.path.isfile("event_data.mat"):
-                os.link(os.path.join(__dir__, "event_data.mat"), "event_data.mat")
-                do_unlink = True
+                wget.download("http://cortex.nus.edu.sg/testdata/J20140807_event_data.mat", "event_data.mat")
             trials = OldWorkingMemoryTrials()
-            assert (trials.events == "trial_start").sum() == 1708
-            assert (trials.events == "reward_on").sum() == 621
+            assert (trials.events == "trial_start").sum() == 934
+            assert (trials.events == "reward_on").sum() == 369
             if do_unlink:
                 os.unlink("event_data.mat")
