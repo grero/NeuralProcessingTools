@@ -136,7 +136,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         words = []
         if (strobes[0] == 4415) or (strobes[0] == 4606) or (strobes[0] == 4159): 
             for sv in strobes:
-                w = np.binary_repr(-sv, 16)[-8:]
+                w = np.binary_repr(~sv, 16)[-8:]
                 words.append(w)
         elif strobes[0] == -4416:
             for sv in strobes:
@@ -151,7 +151,7 @@ class OldWorkingMemoryTrials(TrialStructure):
                 words.append(w)
         elif (strobes.min() == 63) or (strobes.min() == 77) or (strobes.min() == 2069) or (strobes.min() == 2071) or (strobes.min() == 2271):
             for sv in strobes:
-                w = np.binary_repr(-w, 16)[-8:]
+                w = np.binary_repr(~sv, 16)[-8:]
                 words.append(w)
         else:
             for sv in strobes:
