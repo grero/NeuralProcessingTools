@@ -20,6 +20,12 @@ def test_oldtrials():
                 wget.download("http://cortex.nus.edu.sg/testdata/J20140807_event_data.mat", "event_data.mat")
                 do_unlink = True
             trials = OldWorkingMemoryTrials()
+            # test specific strobes
+            strobes = np.int16([4415, 4607])
+            words = trials.to_words(strobes)
+            assert words[0] == '11000000'
+            assert words[1] == '00000000'
+
             assert (trials.events == "trial_start").sum() == 934
             assert (trials.events == "reward_on").sum() == 369
             print(trials.events)
