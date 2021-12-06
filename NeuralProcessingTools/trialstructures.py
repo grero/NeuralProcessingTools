@@ -107,7 +107,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         leveldir = resolve_level(self.level)
         fname = os.path.join(leveldir, self.filename)
         if h5py.is_hdf5(fname):
-            ff = h5py.File(fname)
+            ff = h5py.File(fname, "r")
             sv = ff.get("sv")[:].flatten().astype(np.int16)
             ts = ff.get("ts")[:].flatten()
         else:
