@@ -161,6 +161,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         return words
     
     def parse_word(self, word):
+        stimid = 0
         if (word[:2] == "10") or (word[:2] == "01"):
             if word[0] == "0" and word[1] == "1":
                 stimid = 1
@@ -179,7 +180,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         else:
             event = self.reverse_map.get(word, None)
 
-        return event, 0
+        return event, stimid
 
 class WorkingMemoryTrials(TrialStructure):
     filename = "event_markers.csv"
