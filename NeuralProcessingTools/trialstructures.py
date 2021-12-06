@@ -11,12 +11,13 @@ import re
 
 
 class TrialStructure(DPObject):
-    def __init__(self, **kwargs):
+    def __init__(self, do_load=True, **kwargs):
         self.events = []
         self.timestamps = []
         DPObject.__init__(self, **kwargs)
         self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
-        self.load()
+        if do_load:
+            self.load()
 
     def get_timestamps(self, event_label):
         """
@@ -106,7 +107,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         leveldir = resolve_level(self.level)
         fname = os.path.join(leveldir, self.filename)
         if h5py.is_hdf5(fname):
-            ff = h5py.File(fname)
+            ff = h5py.File(fname, "r")
             sv = ff.get("sv")[:].flatten().astype(np.int16)
             ts = ff.get("ts")[:].flatten()
         else:
@@ -161,6 +162,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         return words
     
     def parse_word(self, word):
+        stimid = 0
         if (word[:2] == "10") or (word[:2] == "01"):
             if word[0] == "0" and word[1] == "1":
                 stimid = 1
@@ -179,7 +181,7 @@ class OldWorkingMemoryTrials(TrialStructure):
         else:
             event = self.reverse_map.get(word, None)
 
-        return event, 0
+        return event, stimid
 
 class WorkingMemoryTrials(TrialStructure):
     filename = "event_markers.csv"

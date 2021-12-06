@@ -1,6 +1,7 @@
 import DataProcessingTools
 from DataProcessingTools.objects import DPObject
 import numpy as np
+import h5py
 import scipy.io as sio
 import os
 
@@ -25,9 +26,15 @@ class Spiketrain(DPObject):
             self.spikeshape = np.array((), dtype=np.float64)
 
     def load(self, fname=None):
-        q = sio.loadmat(self.filename)
-        self.timestamps = q["timestamps"]
-        self.spikeshape = q["spikeForm"]
+        if h5py.is_hdf5(self.filename):
+            with h5py.File(self.filename,"r") as fid:
+                self.timestamps = fid["timestamps"][:].flatten()
+                if "spikeForm" in fid.keys():
+                    self.spikeshape = fid["spikeForm"][:]
+        else:
+            q = sio.loadmat(self.filename)
+            self.timestamps = q["timestamps"]
+            self.spikeshape = q["spikeForm"]
 
     def get_filename(self):
         return self.filename

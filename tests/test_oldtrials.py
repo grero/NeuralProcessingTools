@@ -28,7 +28,11 @@ def test_oldtrials():
 
             assert (trials.events == "trial_start").sum() == 934
             assert (trials.events == "reward_on").sum() == 369
-            print(trials.events)
+
+            assert (trials.stimidx == 0).sum() == 2767  # target
+            assert (trials.stimidx == 1).sum() == 0  # retarget
+            assert (trials.stimidx == 2).sum() == 1772  # distractor
+
             tidx = np.where(trials.events == "stimulus_on_1_6")[0]
             assert tidx[0] == 2
             didx = np.where(trials.events == "stimulus_on_2_14")[0]
