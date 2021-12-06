@@ -11,12 +11,13 @@ import re
 
 
 class TrialStructure(DPObject):
-    def __init__(self, **kwargs):
+    def __init__(self, do_load=True, **kwargs):
         self.events = []
         self.timestamps = []
         DPObject.__init__(self, **kwargs)
         self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
-        self.load()
+        if do_load:
+            self.load()
 
     def get_timestamps(self, event_label):
         """
