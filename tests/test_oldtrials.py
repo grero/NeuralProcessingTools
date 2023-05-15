@@ -33,11 +33,11 @@ def test_oldtrials():
             assert (trials.stimidx == 1).sum() == 0  # retarget
             assert (trials.stimidx == 2).sum() == 1772  # distractor
 
-            tidx = np.where(trials.events == "stimulus_on_1_6")[0]
+            tidx = np.where(trials.events == "stimulus_on_1_7")[0]
             assert tidx[0] == 2
-            didx = np.where(trials.events == "stimulus_on_2_14")[0]
+            didx = np.where(trials.events == "stimulus_on_2_17")[0]
             assert didx[0] == 323
-            assert trials.ncols == 4
-            assert trials.nrows == 4
+            assert trials.ncols == 5
+            assert trials.nrows == 5
             if do_unlink:
                 os.unlink("event_data.mat")
