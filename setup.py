@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="NeuralProcessingTools",
-      version="0.7.0",
+      version="0.7.1",
       description="""Tools for processing neural data""",
       url="https://github.com/grero/NeuralProcessingTools.git",
       author="Roger Herikstad",
