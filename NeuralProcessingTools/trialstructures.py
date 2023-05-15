@@ -99,8 +99,8 @@ class OldWorkingMemoryTrials(TrialStructure):
                    }
 
     def __init__(self, *args, **kwargs):
-        self.ncols = 0
-        self.nrows = 0
+        self.ncols = 5
+        self.nrows = 5
         TrialStructure.__init__(self, *args, **kwargs)
 
     def load(self):
